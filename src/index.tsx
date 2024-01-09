@@ -3,11 +3,17 @@ import type { FC } from "hono/jsx";
 
 const app = new Hono();
 
-const Layout: FC = () => {
+const Layout: FC = (props) => {
   return (
-    <div>
-      <h1>Hello Hono!</h1>
-    </div>
+    <html lang="en">
+      <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+        <title>Document</title>
+      </head>
+      <body>{props.children}</body>
+    </html>
   );
 };
 
@@ -19,8 +25,21 @@ const Second: FC<{ id: string }> = (props: { id: string }) => {
   );
 };
 
+app.get("/hello", (c) => {
+  return c.json({
+    hello: "world",
+  });
+});
+
 app.get("/", (c) => {
-  return c.html(<Layout />);
+  return c.html(
+    <Layout>
+      <h1>Hello World</h1>
+      <button hx-get="/hello" hx-swap="innerHTML">
+        Click Me
+      </button>
+    </Layout>
+  );
 });
 
 app.get("/jsx/:id", (c) => {
